@@ -1,2 +1,4 @@
-ELT_SCRAP
-data
+scraping
+*.env
+__pycache__/
+logs
