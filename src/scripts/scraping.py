@@ -53,9 +53,6 @@ class Scraping:
                 list_price = None
                 cash_price = None
 
-
-            print("List Price:", list_price.text if list_price else "") 
-            print("Cash Price:", cash_price.text if cash_price else "")
             
             self.logger.info("INSTALLMENTS DATA")
             installments_list = []
@@ -106,6 +103,7 @@ class Scraping:
             time.sleep(random.uniform(2, 5))
             list_price = None
             cash_price = None
+            installments_dict = None
             producto_no_disponible = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRODUCTO_NO_DISPONIBLE"])
             if producto_no_disponible:
                 self.product_data["name"] = ""
@@ -144,13 +142,11 @@ class Scraping:
                 list_price = price_mostrado
                 cash_price = None
 
-            print("List Price:", list_price.text if list_price else "") 
-            print("Cash Price:", cash_price.text if cash_price else "")
-
-            self.logger.info("INSTALLMENTS DATA")
-            installments_list = [instalment.text for instalment in installments if instalment.text.isdigit()]
-            self.logger.info(installments_list)
-            installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installments_list)}
+            if installments:
+                self.logger.info("INSTALLMENTS DATA")
+                installments_list = [instalment.text for instalment in installments if instalment.text.isdigit()]
+                self.logger.info(installments_list)
+                installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installments_list)}
 
             self.product_data["name"] = product_title.text if product_title else ""
             self.product_data["sku"] = product_sku.text.replace("Artículo: ", "") if product_sku else ""
@@ -179,6 +175,7 @@ class Scraping:
             list_price = None
             cash_price = None
             stock = None
+            installments_dict = None
             product_title = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["PRODUCT_TITLE"])
             product_sku = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["SKU"])
             brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["BRAND"])
@@ -198,13 +195,11 @@ class Scraping:
                 list_price = price_mostrado
                 cash_price = None
 
-            self.logger.info(f'LIST PRICE ------------------- {list_price.text}')
-            self.logger.info(f'CASH PRICE ------------------- {cash_price.text}')
-
-            self.logger.info("INSTALLMENTS DATA")
-            installment_text = [installment.text for installment in installments if "cuotas" in installment.text]
-            installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installment_text)}
-            self.logger.info(f"Installments: {installments_dict}")
+            if installments:
+                self.logger.info("INSTALLMENTS DATA")
+                installment_text = [installment.text for installment in installments if "cuotas" in installment.text]
+                installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installment_text)}
+                self.logger.info(f"Installments: {installments_dict}")
 
             if button_ad_to_cart:
                 stock = True
@@ -237,6 +232,7 @@ class Scraping:
             list_price = None
             cash_price = None
             stock = None
+            installments_dict = None
             product_title = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.NALDO_SELECTORS["PRODUCT_TITLE"])
             product_sku = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.NALDO_SELECTORS["SKU"])
             brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["BRAND"])
@@ -257,14 +253,12 @@ class Scraping:
                 list_price = price_mostrado
                 cash_price = None
 
-            self.logger.info(f'LIST PRICE: {list_price}')
-            self.logger.info(f'CASH PRICE: {cash_price}')
-
-            self.logger.info("INSTALLMENTS DATA")
-            installment_text = [installment.text for installment in installments if "cuotas" in installment.text]
-            self.logger.info(installment_text)
-            installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installment_text)}
-            self.logger.info(f"Installments: {installments_dict}")
+            if installments:
+                self.logger.info("INSTALLMENTS DATA")
+                installment_text = [installment.text for installment in installments if "cuotas" in installment.text]
+                self.logger.info(installment_text)
+                installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installment_text)}
+                self.logger.info(f"Installments: {installments_dict}")
 
             self.product_data["name"] = product_title.text if product_title else ""
             self.product_data["sku"] = product_sku.text if product_sku else ""
