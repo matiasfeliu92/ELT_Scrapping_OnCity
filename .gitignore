@@ -1,4 +1,5 @@
 scraping
-*.env
+.env
 __pycache__/
 logs
+data
