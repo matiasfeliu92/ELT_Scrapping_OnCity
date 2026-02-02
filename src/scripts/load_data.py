@@ -4,7 +4,8 @@ import platform
 from typing import List
 
 import pandas as pd
-from sqlalchemy import JSON, Column, MetaData, Table, func, inspect, select, TIMESTAMP, VARCHAR
+from sqlalchemy import Column, DateTime, MetaData, String, Table, INTEGER, UniqueConstraint, schema
+from sqlalchemy.dialects.postgresql import JSONB
 from src.config.settings import Settings
 from src.config.logger import LoggerConfig
 from src.config.db import ManageDB
@@ -49,31 +50,32 @@ class LoadData:
         self.engine = self.db_config.create_engine(self.conn_string_new_DB)
         self.logger.info("Database and schema setup completed.")
         self.logger.info("Starting data load into database...")
-        table_name = "raw_products_scraping"
-        metadata = MetaData()
+        table_name = "scraping_data"
+        metadata = MetaData(schema="raw")
         raw_products_scraping = Table(
             table_name,
             metadata,
-            Column("date", TIMESTAMP),
-            Column("link", VARCHAR),
-            Column("data", JSON),
+            Column("id", INTEGER, primary_key=True, autoincrement=True), # Recomendado para tracking
+            Column("scraped_at", DateTime),
+            Column("product_id", String),
+            Column("retailer", String),
+            Column("raw_data", JSONB),      # El dump completo del scraper
+            UniqueConstraint("scraped_at", "product_id", "retailer", name="uq_scraped_product_retailer")
         )
-        last_ts = self.get_last_timestamp.execute(self.engine, raw_products_scraping)
-        if last_ts:
-            self.logger.info(f"Tabla detectada. Último registro procesado: {last_ts}")
-        else:
-            self.logger.info(f"Tabla no existe o está vacía. Se realizará carga total.")
-            metadata.create_all(self.engine)
+        with self.engine.begin() as conn:
+            conn.execute(schema.CreateSchema("raw", if_not_exists=True))
+            metadata.create_all(conn)
         self.logger.info(f"Insertando {len(__data__)} registros nuevos.")
-        now = datetime.now() 
-        formatted_data = [] 
-        for obj in __data__: 
-            formatted_data.append({ 
-                "date": now,
-                "link": obj.get("link", ""), # fallback si no hay link 
-                "data": obj 
+        formatted_rows = []
+        for item in __data__:
+            formatted_rows.append({
+                "scraped_at": item.get("scraped_at", datetime.now()),
+                "product_id": item.get("product_id"),
+                "retailer": item.get("retailer"),
+                "raw_data": item.get("data")
             })
         with self.engine.begin() as conn:
-            conn.execute(raw_products_scraping.insert(), formatted_data)
-            self.logger.info(f"Data successfully loaded into table: {table_name}")
+            conn.execute(raw_products_scraping.insert(), formatted_rows)
+            self.logger.info(f"Data successfully loaded into table: raw.{table_name}")
+
         self.logger.info("Data load process completed.")

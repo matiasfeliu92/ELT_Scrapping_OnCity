@@ -6,3 +6,8 @@ psycopg2-binary
 webdriver_manager
 beautifulsoup4
 lxml
+dbt-core
+dbt-postgres
+openpyxl
+gspread
+google-auth

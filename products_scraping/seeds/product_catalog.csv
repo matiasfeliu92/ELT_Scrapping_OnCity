@@ -1,0 +1,36 @@
+product_id;brand;model;main_category;sub_category;retailer;link;is_active
+helad_sams_001;Samsung;RT29K577JS8;Electrodomesticos;Heladeras;Fravega;https://www.fravega.com/p/heladera-samsung-no-frost-inverter-rt29k577js8-308lts-160752/;TRUE
+helad_sams_001;Samsung;RT29K577JS8;Electrodomesticos;Heladeras;Megatone;https://www.megatone.net/producto/heladera-308l-rt29k577js8-no-frost-inv-disp-ix-samsung_HEL2958SSG/;TRUE
+helad_sams_001;Samsung;RT29K577JS8;Electrodomesticos;Heladeras;Musimundo;https://www.musimundo.com/marcas/samsung/heladera-inverter-samsung-sart29k577js8-gris/p/00313093;TRUE
+led_philips_40_002;Philips;40PFD6920/77;Tv y Video;Tv;Fravega;https://www.fravega.com/p/smart-tv-philips-40-led-full-hd-40pfd6920-77-google-tv-wifi-503082/;TRUE
+led_philips_40_002;Philips;40PFD6920/77;Tv y Video;Tv;Megatone;https://www.megatone.net/producto/tv-led-sm-40p-fhd-40pfd6920-go-philips_TEL4000PHI/?psc=2&url=/listado/Tv,%20Audio%20Y%20Video/Tv%20Led,%20Smart%20Tv/Tv%2033%20Hasta%2043%20Pulgadas/;TRUE
+led_philips_40_002;Philips;40PFD6920/77;Tv y Video;Tv;Musimundo;https://www.musimundo.com/audio-tv-video/televisores/smart-led-google-tv-philips-40-pulgadas-full-hd-40pfd6920-77/p/01147018;TRUE
+led_philips_40_002;Philips;40PFD6920/77;Tv y Video;Tv;Naldo;https://www.naldo.com.ar/40-pfd6920-77-smart-fhd-google-tv-505990/p;TRUE
+lav_drean_003;Drean;Concept Neo Fuzzy 6,5 Kg;Electrodomesticos;Lavarropas;Fravega;https://www.fravega.com/p/lavarropas-drean-concept-neo-fuzzy-6-5-kg-blanco-170702/;TRUE
+lav_drean_003;Drean;Concept Neo Fuzzy 6,5 Kg;Electrodomesticos;Lavarropas;Megatone;https://www.megatone.net/producto/lavarropas-automatico-neo-concept-65k-800rpm-cs-drean-led-digital_MKT0573LTA/?psc=3&url=/listado/Electrodom%C3%A9sticos/Lavado/Lavarropas/;TRUE
+lav_drean_003;Drean;Concept Neo Fuzzy 6,5 Kg;Electrodomesticos;Lavarropas;Musimundo;https://www.musimundo.com/electrohogar/lavarropas/lavarropas-automatico-drean-concept-neo-6-5-blanco/p/01164003;TRUE
+lav_drean_003;Drean;Concept Neo Fuzzy 6,5 Kg;Electrodomesticos;Lavarropas;Naldo;https://www.naldo.com.ar/6-5kg-concept-neo-658b-800rpm-blanco-208131/p;TRUE
+tel_moto_004;Motorola;G56;Tecnologia;Celulares;Fravega;https://www.fravega.com/p/celular-motorola-g56-8gb-256gb-gray-782680/;TRUE
+tel_moto_004;Motorola;G56;Tecnologia;Celulares;Megatone;https://www.megatone.net/producto/motorola-g56-xt2529-1-8gb256gb-ve_KIT2530MOT/?psc=3&url=/listado/Celulares,%20Notebooks%20Y%20Tecnolog%C3%ADa/Celulares/Smartphones%20Y%20Celulares/;TRUE
+tel_moto_004;Motorola;G56;Tecnologia;Celulares;Musimundo;https://www.musimundo.com/telefonia/telefonos-celulares/celulares-liberados/celular-motorola-moto-g56-5g-xt2529-1-gris/p/01123005;TRUE
+tel_moto_004;Motorola;G56;Tecnologia;Celulares;Naldo;https://www.naldo.com.ar/moto-g56-5g-gris-8-256gb-6-72--406839/p;TRUE
+helad_whirp_005;Whirpool;WRM39CK;Electrodomesticos;Heladeras;Fravega;https://www.fravega.com/p/heladera-no-frost-340-litros-whirlpool-wrm39ck-inoxidable-21916502/;TRUE
+helad_whirp_005;Whirpool;WRM39CK;Electrodomesticos;Heladeras;Megatone;https://www.megatone.net/producto/heladera-whirlpool-no-frost-340-lts-evox_MKT0192WHI/?psc=19&url=/listado/Electrodom%C3%A9sticos/Heladeras%20Y%20Freezers/Heladeras%20No%20Frost/;TRUE
+helad_whirp_005;Whirpool;WRM39CK;Electrodomesticos;Heladeras;Musimundo;https://www.musimundo.com/marcas/whirlpool/heladera-no-frost-whirlpool-wrm39ck-acero-inoxidable/p/00923010;TRUE
+helad_whirp_005;Whirpool;WRM39CK;Electrodomesticos;Heladeras;Naldo;https://www.naldo.com.ar/361l-wrm39ckdim-inox-n-f-208193/p;TRUE
+led_sams_43_006;Samsung;UN43F6000FGCZB;Tv y Video;Tv;Fravega;https://www.fravega.com/p/smart-tv-samsung-full-hd-43-un43f6000fgczb-503125/;TRUE
+led_sams_43_006;Samsung;UN43F6000FGCZB;Tv y Video;Tv;Megatone;https://www.megatone.net/producto/tv-led-smart-43p-fhd-f6000f-samsung_TEL4360SSG/?psc=1&url=/listado/Tv,%20Audio%20Y%20Video/Tv%20Led,%20Smart%20Tv/Tv%2033%20Hasta%2043%20Pulgadas/;TRUE
+led_sams_43_006;Samsung;UN43F6000FGCZB;Tv y Video;Tv;Musimundo;https://www.musimundo.com/audio-tv-video/televisores/smart-led-tv-samsung-43-pulgadas-full-hd-un43f6000fgczb/p/01138018;TRUE
+led_sams_43_006;Samsung;UN43F6000FGCZB;Tv y Video;Tv;Naldo;https://www.naldo.com.ar/43-un43f6000-smart-fhd-hdr-bt-tizen-hdmi-506046/p;TRUE
+lav_sams_007;Samsung;WW95AA046BXUBG;Electrodomesticos;Lavarropas;Fravega;https://www.fravega.com/p/lavarropas-samsung-ww95aa046bxubg-9-5kg-inox-inverter-990042205/;TRUE
+lav_sams_007;Samsung;WW95AA046BXUBG;Electrodomesticos;Lavarropas;Megatone;https://www.megatone.net/producto/lavarropas-samsung-ww95aa046bxubg-95kg-inox-inverter_MKT0418VIS/?psc=7&url=/listado/Electrodom%C3%A9sticos/Lavado/Lavarropas/;TRUE
+lav_sams_007;Samsung;WW95AA046BXUBG;Electrodomesticos;Lavarropas;Musimundo;https://www.musimundo.com/marcas/samsung/lavarropas-automatico-inverter-samsung-ww95aa046bxubg-9-5-silver/p/00727034;TRUE
+lav_sams_007;Samsung;WW95AA046BXUBG;Electrodomesticos;Lavarropas;Naldo;https://www.naldo.com.ar/207834/p;TRUE
+tel_sams_008;Samsung;Galaxy A06;Tecnologia;Celulares;Fravega;https://www.fravega.com/p/celular-samsung-galaxy-a06-128gb-celeste-782439/;TRUE
+tel_sams_008;Samsung;Galaxy A06;Tecnologia;Celulares;Megatone;https://www.megatone.net/producto/celular-samsung-galaxy-a06-128-gb-light-blue_MKT0306VFL/;TRUE
+tel_sams_008;Samsung;Galaxy A06;Tecnologia;Celulares;Musimundo;https://www.musimundo.com/telefonia/telefonos-celulares/celulares-liberados/celular-samsung-galaxy-a06-ligth-blue/p/00948028;TRUE
+tel_sams_008;Samsung;Galaxy A06;Tecnologia;Celulares;Naldo;https://www.naldo.com.ar/galaxy-a06-light-blue-4-128gb-6-7--406554/p;TRUE
+helad_electr_009;Electrolux;IFS43;Electrodomesticos;Heladeras;Fravega;https://www.fravega.com/p/heladera-electrolux-inverter-no-frost-if43s-390lts-160984/;TRUE
+helad_electr_009;Electrolux;IFS43;Electrodomesticos;Heladeras;Megatone;https://www.megatone.net/producto/heladera-408l-if43s-no-frost-inv-inox-electrolux_HEL0143ETX/?psc=3&url=/listado/Electrodom%C3%A9sticos/Heladeras%20Y%20Freezers/Heladeras%20No%20Frost/;TRUE
+helad_electr_009;Electrolux;IFS43;Electrodomesticos;Heladeras;Musimundo;https://www.musimundo.com/marcas/electrolux/heladera-con-freezer-electrolux-if43s-plata/p/01018030;TRUE
+helad_electr_009;Electrolux;IFS43;Electrodomesticos;Heladeras;Naldo;https://www.naldo.com.ar/408l-if43s-plata-inv-autosense-n-f-208529-1/p;TRUE

@@ -30,7 +30,7 @@ class Scraping:
             product_sku = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["SKU"])
             brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["BRAND"])
             category_path_nav = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["CATEGORY_PATH"])
-            price_mostrado = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MEGATONE_SELECTORS["PRICE_MOSTRADO"])
+            price_mostrado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_MOSTRADO"])
             price_tachado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_TACHADO"])
             price_1_pago = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_1_PAGO"])
             installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MEGATONE_SELECTORS["INSTALLMENTS"], multiple=True)
@@ -43,17 +43,24 @@ class Scraping:
             self.logger.info(f"Category Path: {category_path_links_text}")
 
             self.logger.info("PRICES DATA")
-            if price_tachado and price_mostrado:
-                list_price = price_tachado
-                cash_price = price_mostrado
-            elif price_mostrado and price_1_pago:
-                list_price = price_mostrado
-                cash_price = price_1_pago
-            elif sin_stock and not con_stock and not price_1_pago and not price_mostrado and not price_tachado:
+            if price_tachado:
+                self.logger.info(f"PRICE TACHADO ------> {price_tachado.text}")
+            if price_mostrado:
+                self.logger.info(f"PRICE MOSTRADO ------> {price_mostrado.text}")
+
+            if price_tachado and price_mostrado and price_1_pago:
+                list_price = price_tachado.text
+                cash_price = price_mostrado.text
+            elif price_tachado and price_mostrado and not price_1_pago:
+                list_price = price_tachado.text
+                cash_price = price_mostrado.text
+            elif not price_tachado and price_mostrado and not price_1_pago:
+                list_price = price_mostrado.text
+                cash_price = None
+            else:
                 list_price = None
                 cash_price = None
 
-            
             self.logger.info("INSTALLMENTS DATA")
             installments_list = []
             if installments:
@@ -82,8 +89,8 @@ class Scraping:
             self.product_data["brand"] = brand.text if brand else ""
             self.product_data["main_category"] = category_path_links_text[1] if len(category_path_links_text)>1 else ""
             self.product_data["sub_category"] = category_path_links_text[2] if len(category_path_links_text)>2 else ""
-            self.product_data["list_price"] = list_price.text if list_price else ""
-            self.product_data["cash_price"] = cash_price.text if cash_price else ""
+            self.product_data["list_price"] = list_price if list_price else ""
+            self.product_data["cash_price"] = cash_price if cash_price else ""
             self.product_data["installments"] = installments_dict
             self.product_data["stock"] = stock
             self.product_data["store"] = "Megatone"
@@ -184,7 +191,7 @@ class Scraping:
             price_tachado = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["PRICE_TACHADO"])
             installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["INSTALLMENTS"], multiple=True)
             button_ad_to_cart = self.extract_elements.safe_find_elements(By.ID, self.scraping_settings.MUSIMUNDO_SELECTORS["BUTTON_ADD_TO_CART"])
-
+            
             category_path_links_text = [link.find_element(By.TAG_NAME, "a").text for link in category_path_nav if link.get_attribute("data-test-breadcrumbs") == "breadcrumb"]
             self.logger.info(f"Category Path: {category_path_links_text}")
 
@@ -241,7 +248,13 @@ class Scraping:
             price_mostrado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["PRICE_MOSTRADO"])
             installments = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["INSTALLMENTS"], multiple=True)
 
-            category_path_links_text = [link.text for link in category_path_nav]
+            if category_path_nav is not None:
+                if len(category_path_nav)>0:
+                    category_path_links_text = [link.text for link in category_path_nav]
+                else:
+                    category_path_links_text = []
+            else:
+                category_path_links_text = []
 
             if price_tachado and price_mostrado:
                 price_tachado = price_tachado.text.replace(" ", "").replace("\n", "")
