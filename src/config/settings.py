@@ -5,6 +5,12 @@ load_dotenv()
 
 class Settings:
     BASE_DIR = os.getcwd()
+    GOOGLE_CREDENTIALS = os.getenv("GOOGLE_CREDENTIALS")
+    GOOGLE_SCOPES = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    OUTPUT_PRODUCT_CATALOG_CSV_SEEDS = os.getenv("SEED_PRODUCT_CATALOG_PATH")
     POSTGRES_DB_USER = os.getenv("DB_USER")
     POSTGRES_DB_PASS = os.getenv("DB_PASS")
     POSTGRES_DB_HOST = os.getenv("DB_HOST")
