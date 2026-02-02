@@ -14,7 +14,7 @@ class MoveXlsxToSeeds:
         self.logger = LoggerConfig.get_logger(self.__class__.__name__)
         self.google_sheet_credentials = self.settings.GOOGLE_CREDENTIALS
         self.google_scopes = self.settings.GOOGLE_SCOPES
-        self.product_catalog_csv_output = self.settings.OUTPUT_PRODUCT_CATALOG_CSV_SEEDS
+        self.product_catalog_csv_output = os.path.join(self.base_dir, "products_scraping", "seeds")
 
     def read_google_sheets(self): 
         try: 
