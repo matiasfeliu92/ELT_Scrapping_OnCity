@@ -4,8 +4,8 @@ import platform
 from typing import List
 
 import pandas as pd
-from sqlalchemy import Column, DateTime, MetaData, String, Table, INTEGER, UniqueConstraint, schema
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, DateTime, MetaData, String, Table, INTEGER, UniqueConstraint, inspect, schema
+from sqlalchemy.dialects.postgresql import JSONB, insert
 from src.config.settings import Settings
 from src.config.logger import LoggerConfig
 from src.config.db import ManageDB
@@ -41,6 +41,10 @@ class LoadData:
         )
 
     def load(self, __data__: List[dict]):
+        if not __data__: 
+            self.logger.warning("No hay datos para insertar, se omite la carga.") 
+            return        
+        self.logger.info(f"SCRAPED DATA ------ {__data__}")
         self.logger.info(f"SYSTEM PLATFORM: {platform.system()}")
         self.logger.info("Starting database connection and setup...")
         self.engine = self.db_config.create_engine(self.conn_string_default_DB)
@@ -63,7 +67,9 @@ class LoadData:
             UniqueConstraint("scraped_at", "product_id", "retailer", name="uq_scraped_product_retailer")
         )
         with self.engine.begin() as conn:
-            conn.execute(schema.CreateSchema("raw", if_not_exists=True))
+            inspector = inspect(conn)
+            if "raw" not in inspector.get_schema_names():
+                conn.execute(schema.CreateSchema("raw"))
             metadata.create_all(conn)
         self.logger.info(f"Insertando {len(__data__)} registros nuevos.")
         formatted_rows = []
@@ -74,8 +80,16 @@ class LoadData:
                 "retailer": item.get("retailer"),
                 "raw_data": item.get("data")
             })
+
         with self.engine.begin() as conn:
-            conn.execute(raw_products_scraping.insert(), formatted_rows)
-            self.logger.info(f"Data successfully loaded into table: raw.{table_name}")
+            stmt = insert(raw_products_scraping).values(formatted_rows)
+            stmt = stmt.on_conflict_do_nothing(
+                index_elements=["scraped_at", "product_id", "retailer"]
+            )
+            with self.engine.begin() as conn:
+                conn.execute(stmt)
+            self.logger.info(
+                f"Data successfully loaded into table: raw.{table_name} (duplicates ignored)"
+            )
 
         self.logger.info("Data load process completed.")
