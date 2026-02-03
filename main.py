@@ -17,4 +17,6 @@ if __name__ == "__main__":
     print(result.stdout)
     os.chdir(base_dir)
     extract_data = ExtractData()
-    extract_data.extract()
+    scraped_products = extract_data.extract()
+    load_data = LoadData()
+    load_data.load(scraped_products)
