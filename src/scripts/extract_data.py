@@ -53,17 +53,14 @@ class ExtractData:
         file_name = "all_products.json"
         json_complete_dir = os.path.join(output_json_path, file_name)
         json_complete_dir = os.path.normpath(json_complete_dir)
-        self.logger.info("---------------FULL JSON PATH------------------")
-        self.logger.info(json_complete_dir)
         metadata = MetaData() 
         scraping_data_table = Table("scraping_data", metadata, schema="raw", autoload_with=self.engine)
         last_timestamp = self.get_last_timestamp.execute(self.engine, scraping_data_table)
-        self.logger.info(f"LAST TIMESTAMP ------- {last_timestamp.date()}")
-        self.logger.info(datetime.now().date())
         if last_timestamp.date() == datetime.now().date():
-            self.logger.info(f"EL SCRAPING YA SE REALIZO, LA TABLA ESTA ACTUALIZADA AL {last_timestamp.date()}")
+            self.logger.info(f"The scraping has already been run and the last timestamp in scraping-data table is: {last_timestamp.date()}")
         else:
-            self.logger.info("LA TABLA ESTA DESACTUALIZADA")
+            self.logger.info("scraping_data table wasn't updated")
+            self.logger.info("Scraping process will start now")
             for _, row in product_catalog_links.iterrows():
                 scraped_at = datetime.now().strftime('%Y-%m-%d')
                 product_id = row["product_id"]
@@ -79,20 +76,5 @@ class ExtractData:
                     "data": product_data
                 }
                 self.all_products_data.append(product_data_formatted)
+            self.logger.info("Scraping process run successfuly")
             return self.all_products_data
-        
-        # for _, row in product_catalog_links.sample(5).iterrows():
-        #         scraped_at = datetime.now().strftime('%Y-%m-%d')
-        #         product_id = row["product_id"]
-        #         retailer = row["retailer"]
-        #         link = row["link"]
-        #         scraper = Scraping(link, product_id, retailer)
-        #         product_data = scraper.run()
-        #         print(product_data)
-        #         product_data_formatted = {
-        #             "scraped_at": scraped_at,
-        #             "product_id": product_id,
-        #             "retailer": retailer,
-        #             "data": product_data
-        #         }
-        #         self.all_products_data.append(product_data_formatted)
