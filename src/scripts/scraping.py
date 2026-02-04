@@ -42,13 +42,6 @@ class Scraping:
 
             category_path_links = category_path_nav.find_elements(By.TAG_NAME, "a")
             category_path_links_text = [link.text for link in category_path_links]
-            self.logger.info(f"Category Path: {category_path_links_text}")
-
-            self.logger.info("PRICES DATA")
-            if price_tachado:
-                self.logger.info(f"PRICE TACHADO ------> {price_tachado.text}")
-            if price_mostrado:
-                self.logger.info(f"PRICE MOSTRADO ------> {price_mostrado.text}")
 
             if price_tachado and price_mostrado and price_1_pago:
                 list_price = price_tachado.text
@@ -63,28 +56,21 @@ class Scraping:
                 list_price = None
                 cash_price = None
 
-            self.logger.info("INSTALLMENTS DATA")
             installments_list = []
             if installments:
                 for installment in installments:
                     installment_text = installment.find_elements(By.TAG_NAME, "span")
-                    self.logger.info("-----")
-                    self.logger.info("-----")
-                    self.logger.info("-----")
                     for inst in installment_text:
                         if "Sin Interés" not in inst.text and "$" not in inst.text:
-                            self.logger.info(f" - {inst.text}")
                             installments_list.append(inst.text)
             else:
                 installments_dict = None
             installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installments_list)}
-            self.logger.info(f"Installments: {installments_dict}")
 
             if con_stock and not sin_stock:
                 stock = True
             elif sin_stock and not con_stock:
                 stock = False
-            self.logger.info(f"Descriptions: {description}")
 
             self.product_data["name"] = product_title.text if product_title else ""
             self.product_data["sku"] = product_sku.text if product_sku else ""
@@ -142,7 +128,6 @@ class Scraping:
             installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.FRAVEGA_SELECTORS["INSTALLMENTS"], "installments", self.product_id, self.retailer, multiple=True)
 
             category_path_links_text = [link.text for link in category_path_nav if link.get_attribute("itemprop") == "name" and link.text != "" and link.text != "Frávega"]
-            self.logger.info(f"Category Path: {category_path_links_text}")
 
             if price_tachado and price_mostrado:
                 list_price = price_tachado
@@ -152,9 +137,7 @@ class Scraping:
                 cash_price = None
 
             if installments:
-                self.logger.info("INSTALLMENTS DATA")
                 installments_list = [instalment.text for instalment in installments if instalment.text.isdigit()]
-                self.logger.info(installments_list)
                 installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installments_list)}
 
             self.product_data["name"] = product_title.text if product_title else ""
@@ -195,7 +178,6 @@ class Scraping:
             button_ad_to_cart = self.extract_elements.safe_find_elements(By.ID, self.scraping_settings.MUSIMUNDO_SELECTORS["BUTTON_ADD_TO_CART"], self.product_id, self.retailer)
             
             category_path_links_text = [link.find_element(By.TAG_NAME, "a").text for link in category_path_nav if link.get_attribute("data-test-breadcrumbs") == "breadcrumb"]
-            self.logger.info(f"Category Path: {category_path_links_text}")
 
             if price_tachado and price_mostrado:
                 list_price = price_tachado
@@ -205,10 +187,8 @@ class Scraping:
                 cash_price = None
 
             if installments:
-                self.logger.info("INSTALLMENTS DATA")
                 installment_text = [installment.text for installment in installments if "cuotas" in installment.text]
                 installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installment_text)}
-                self.logger.info(f"Installments: {installments_dict}")
 
             if button_ad_to_cart:
                 stock = True
@@ -269,11 +249,8 @@ class Scraping:
                 cash_price = None
 
             if installments:
-                self.logger.info("INSTALLMENTS DATA")
                 installment_text = [installment.text for installment in installments if "cuotas" in installment.text]
-                self.logger.info(installment_text)
                 installments_dict = {f"Opcion {i+1}": cuota for i, cuota in enumerate(installment_text)}
-                self.logger.info(f"Installments: {installments_dict}")
 
             self.product_data["name"] = product_title.text if product_title else ""
             self.product_data["sku"] = product_sku.text if product_sku else ""
