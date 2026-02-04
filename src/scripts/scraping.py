@@ -8,8 +8,10 @@ from src.utils.extract_elements import ExtractElements
 
 
 class Scraping:
-    def __init__(self, __link__):
+    def __init__(self, __link__, __product_id__, __retailer__):
         self.link = __link__
+        self.product_id = __product_id__
+        self.retailer = __retailer__
         self.logger = LoggerConfig.get_logger(self.__class__.__name__)
         self.scraping_settings = ScrapingSettings()
         self.driver = self.scraping_settings.get_chrome_driver()
@@ -26,17 +28,17 @@ class Scraping:
             cash_price = None
             stock = None
             installments_dict = None
-            product_title = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRODUCT_TITLE"])
-            product_sku = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["SKU"])
-            brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["BRAND"])
-            category_path_nav = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["CATEGORY_PATH"])
-            price_mostrado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_MOSTRADO"])
-            price_tachado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_TACHADO"])
-            price_1_pago = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_1_PAGO"])
-            installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MEGATONE_SELECTORS["INSTALLMENTS"], multiple=True)
-            sin_stock = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["SIN_STOCK"])
-            con_stock = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["CON_STOCK"])
-            description = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["DESCRIPTION"], multiple=True)
+            product_title = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRODUCT_TITLE"], "product_title", self.product_id, self.retailer)
+            product_sku = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["SKU"], "product_sku", self.product_id, self.retailer)
+            brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["BRAND"], "product_brand", self.product_id, self.retailer)
+            category_path_nav = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["CATEGORY_PATH"], "category_paths", self.product_id, self.retailer)
+            price_mostrado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_MOSTRADO"], "price_mostrado", self.product_id, self.retailer)
+            price_tachado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_TACHADO"], "price_tachado", self.product_id, self.retailer)
+            price_1_pago = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["PRICE_1_PAGO"], "price 1 pago", self.product_id, self.retailer)
+            installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MEGATONE_SELECTORS["INSTALLMENTS"], "installments", self.product_id, self.retailer, multiple=True)
+            sin_stock = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["SIN_STOCK"], "sin stock", self.product_id, self.retailer)
+            con_stock = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["CON_STOCK"], "con stock", self.product_id, self.retailer)
+            description = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["DESCRIPTION"], "description", self.product_id, self.retailer, multiple=True)
 
             category_path_links = category_path_nav.find_elements(By.TAG_NAME, "a")
             category_path_links_text = [link.text for link in category_path_links]
@@ -111,7 +113,7 @@ class Scraping:
             list_price = None
             cash_price = None
             installments_dict = None
-            producto_no_disponible = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRODUCTO_NO_DISPONIBLE"])
+            producto_no_disponible = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRODUCTO_NO_DISPONIBLE"], "producto no disponible", self.product_id, self.retailer)
             if producto_no_disponible:
                 self.product_data["name"] = ""
                 self.product_data["sku"] = ""
@@ -131,13 +133,13 @@ class Scraping:
                 self.logger.info("")
                 self.logger.info("")
                 return self.product_data
-            product_title = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRODUCT_TITLE"])
-            product_sku = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["SKU"])
-            brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["BRAND"])
-            category_path_nav = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.FRAVEGA_SELECTORS["CATEGORY_PATH"], multiple=True)
-            price_mostrado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRICE_MOSTRADO"])
-            price_tachado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRICE_TACHADO"])
-            installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.FRAVEGA_SELECTORS["INSTALLMENTS"], multiple=True)
+            product_title = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRODUCT_TITLE"], "product_title", self.product_id, self.retailer)
+            product_sku = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["SKU"], "product_sku", self.product_id, self.retailer)
+            brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["BRAND"], "product_brand", self.product_id, self.retailer)
+            category_path_nav = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.FRAVEGA_SELECTORS["CATEGORY_PATH"], "category_paths", self.product_id, self.retailer, multiple=True)
+            price_mostrado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRICE_MOSTRADO"], "price_mostrado", self.product_id, self.retailer)
+            price_tachado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.FRAVEGA_SELECTORS["PRICE_TACHADO"], "price_tachado", self.product_id, self.retailer)
+            installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.FRAVEGA_SELECTORS["INSTALLMENTS"], "installments", self.product_id, self.retailer, multiple=True)
 
             category_path_links_text = [link.text for link in category_path_nav if link.get_attribute("itemprop") == "name" and link.text != "" and link.text != "Frávega"]
             self.logger.info(f"Category Path: {category_path_links_text}")
@@ -183,14 +185,14 @@ class Scraping:
             cash_price = None
             stock = None
             installments_dict = None
-            product_title = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["PRODUCT_TITLE"])
-            product_sku = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["SKU"])
-            brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["BRAND"])
-            category_path_nav = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["CATEGORY_PATH"], multiple=True)
-            price_mostrado = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["PRICE_MOSTRADO"])
-            price_tachado = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["PRICE_TACHADO"])
-            installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["INSTALLMENTS"], multiple=True)
-            button_ad_to_cart = self.extract_elements.safe_find_elements(By.ID, self.scraping_settings.MUSIMUNDO_SELECTORS["BUTTON_ADD_TO_CART"])
+            product_title = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["PRODUCT_TITLE"], "product_title", self.product_id, self.retailer)
+            product_sku = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["SKU"], "product_sku", self.product_id, self.retailer)
+            brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MUSIMUNDO_SELECTORS["BRAND"], "product_brand",self.product_id, self.retailer)
+            category_path_nav = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["CATEGORY_PATH"], "category_paths", self.product_id, self.retailer, multiple=True)
+            price_mostrado = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["PRICE_MOSTRADO"], "price_mostrado", self.product_id, self.retailer)
+            price_tachado = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["PRICE_TACHADO"], "price_tachado", self.product_id, self.retailer)
+            installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["INSTALLMENTS"], "installments", self.product_id, self.retailer, multiple=True)
+            button_ad_to_cart = self.extract_elements.safe_find_elements(By.ID, self.scraping_settings.MUSIMUNDO_SELECTORS["BUTTON_ADD_TO_CART"], self.product_id, self.retailer)
             
             category_path_links_text = [link.find_element(By.TAG_NAME, "a").text for link in category_path_nav if link.get_attribute("data-test-breadcrumbs") == "breadcrumb"]
             self.logger.info(f"Category Path: {category_path_links_text}")
@@ -240,13 +242,13 @@ class Scraping:
             cash_price = None
             stock = None
             installments_dict = None
-            product_title = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.NALDO_SELECTORS["PRODUCT_TITLE"])
-            product_sku = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.NALDO_SELECTORS["SKU"])
-            brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["BRAND"])
-            category_path_nav = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["CATEGORY_PATH"], multiple=True)
-            price_tachado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["PRICE_TACHADO"])
-            price_mostrado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["PRICE_MOSTRADO"])
-            installments = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["INSTALLMENTS"], multiple=True)
+            product_title = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.NALDO_SELECTORS["PRODUCT_TITLE"], "product_title", self.product_id, self.retailer)
+            product_sku = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.NALDO_SELECTORS["SKU"], "product_sku", self.product_id, self.retailer)
+            brand = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["BRAND"], "product_brand", self.product_id, self.retailer)
+            category_path_nav = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["CATEGORY_PATH"], "category_paths", self.product_id, self.retailer, multiple=True)
+            price_tachado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["PRICE_TACHADO"], "price_tachado", self.product_id, self.retailer)
+            price_mostrado = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["PRICE_MOSTRADO"], "price_mostrado", self.product_id, self.retailer)
+            installments = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.NALDO_SELECTORS["INSTALLMENTS"], "installments", self.product_id, self.retailer, multiple=True)
 
             if category_path_nav is not None:
                 if len(category_path_nav)>0:
