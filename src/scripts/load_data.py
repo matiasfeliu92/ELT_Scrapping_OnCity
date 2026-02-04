@@ -44,7 +44,6 @@ class LoadData:
         if not __data__: 
             self.logger.warning("No hay datos para insertar, se omite la carga.") 
             return        
-        self.logger.info(f"SYSTEM PLATFORM: {platform.system()}")
         self.logger.info("Starting database connection and setup...")
         self.engine = self.db_config.create_engine(self.conn_string_default_DB)
         conn = self.db_config.create_connection(self.conn_string_for_cursor_default_DB)
@@ -112,6 +111,7 @@ class LoadData:
         cursor_new_db = conn_new_db.cursor()
         cursor_new_db.execute(scraping_error_logs_table_query)
         conn_new_db.commit()
+        self.logger.info("Table logs.scraping_error_logs was created succesfully")
 
     def create_logs_table(self):
         pass
