@@ -17,7 +17,6 @@ class LoadData:
         self.db_config = ManageDB()
         self.settings = Settings()
         self.get_last_timestamp = GetLastTimestamp()
-        self.logger = LoggerConfig.get_logger(self.__class__.__name__)
         self.conn_string_default_DB = (
             self.settings.POSTGRES_CONNECTION_STRING_DEFAULT_DB
             if platform.system() == "Windows"
@@ -39,12 +38,12 @@ class LoadData:
             if platform.system() == "Windows"
             else self.settings.POSTGRES_CURSOR_CONNECTION_STRING_DOCKER_NEW_DB
         )
+        self.logger = LoggerConfig.get_logger(self.__class__.__name__)
 
     def load(self, __data__: List[dict]):
         if not __data__: 
             self.logger.warning("No hay datos para insertar, se omite la carga.") 
             return        
-        self.logger.info(f"SCRAPED DATA ------ {__data__}")
         self.logger.info(f"SYSTEM PLATFORM: {platform.system()}")
         self.logger.info("Starting database connection and setup...")
         self.engine = self.db_config.create_engine(self.conn_string_default_DB)
@@ -93,3 +92,49 @@ class LoadData:
             )
 
         self.logger.info("Data load process completed.")
+
+    def create_scraping_error_logs_table(self):
+        scraping_error_logs_table_query = f""" 
+            CREATE TABLE IF NOT EXISTS logs.scraping_error_logs ( 
+                id SERIAL PRIMARY KEY, 
+                log_time DATE NOT NULL, 
+                product_id VARCHAR(100), 
+                retailer VARCHAR(100), 
+                field VARCHAR(100),
+                error JSONB NOT NULL,
+                CONSTRAINT uq_scraping_error UNIQUE (log_time, product_id, retailer, field)
+            ); 
+        """ 
+        conn = self.db_config.create_connection(self.conn_string_for_cursor_default_DB)
+        self.db_config.create_database(conn, self.settings.POSTGRES_DB_NAME_USE)
+        conn_new_db = self.db_config.create_connection(self.conn_string_for_cursor_new_DB)
+        self.db_config.create_schema(conn_new_db, "logs")
+        cursor_new_db = conn_new_db.cursor()
+        cursor_new_db.execute(scraping_error_logs_table_query)
+        conn_new_db.commit()
+
+    def create_logs_table(self):
+        pass
+
+    def load_scraping_error_logs(self, product_id, retailer, exception, message, by, path, field):
+        self.engine = self.db_config.create_engine(self.conn_string_new_DB)
+        metadata = MetaData(schema="logs") 
+        scraping_error_logs = Table("scraping_error_logs", metadata, autoload_with=self.engine)
+        error_entry = { 
+            "log_time": datetime.now().date(), 
+            "product_id": product_id, 
+            "retailer": retailer, 
+            "field": field,
+            "error": { 
+                "exception": exception, 
+                "message": message, 
+                "by": by, 
+                "path": path 
+            } 
+        }
+        with self.engine.begin() as conn: 
+            stmt = insert(scraping_error_logs).values(error_entry) 
+            stmt = stmt.on_conflict_do_nothing(
+                index_elements=["log_time", "product_id", "retailer", "field"]
+            )
+            conn.execute(stmt)
