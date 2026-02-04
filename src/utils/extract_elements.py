@@ -1,14 +1,17 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, StaleElementReferenceException, ElementNotVisibleException, ElementNotInteractableException
 
+from src.scripts.load_data import LoadData
 from src.config.logger import LoggerConfig
 
 class ExtractElements:
     def __init__(self, __driver__):
         self.driver = __driver__
         self.logger = LoggerConfig.get_logger(self.__class__.__name__)
+        self.load = LoadData()
 
-    def safe_find_elements(self, by, path, multiple=False, timeout=20):
+    def safe_find_elements(self, by, path, field=None, product_id=None, retailer=None, multiple=False, timeout=20):
         try:
             wait = WebDriverWait(self.driver, timeout)
             wait.until(EC.visibility_of_element_located((by, path)))
@@ -20,6 +23,27 @@ class ExtractElements:
                 self.logger.info("ELEMENT")
                 element = self.driver.find_element(by, path)
                 return element if element else None
+        except TimeoutException as e:
+            self.logger.error( f"[TimeoutException] {str(e)} | field={field} | by={by} | path={path} | product_id={product_id} | retailer={retailer}" )
+            self.load.load_scraping_error_logs(product_id, retailer, "TimeoutException", str(e), by, path, field)
+            return None
+        except NoSuchElementException as e:
+            self.logger.error( f"[NoSuchElementException] {str(e)} | field={field} | by={by} | path={path} | product_id={product_id} | retailer={retailer}" )
+            self.load.load_scraping_error_logs(product_id, retailer, "NoSuchElementException", str(e), by, path, field)
+            return None
+        except StaleElementReferenceException as e:
+            self.logger.error( f"[StaleElementReferenceException] {str(e)} | field={field} | by={by} | path={path} | product_id={product_id} | retailer={retailer}" )
+            self.load.load_scraping_error_logs(product_id, retailer, "StaleElementReferenceException", str(e), by, path, field)
+            return None
+        except ElementNotVisibleException as e:
+            self.logger.error( f"[ElementNotVisibleException] {str(e)} | field={field} | by={by} | path={path} | product_id={product_id} | retailer={retailer}" )
+            self.load.load_scraping_error_logs(product_id, retailer, "ElementNotVisibleException", str(e), by, path, field)
+            return None
+        except ElementNotInteractableException as e:
+            self.logger.error( f"[ElementNotInteractableException] {str(e)} | field={field} | by={by} | path={path} | product_id={product_id} | retailer={retailer}" )
+            self.load.load_scraping_error_logs(product_id, retailer, "ElementNotInteractableException", str(e), by, path, field)
+            return None
         except Exception as e:
-            self.logger.error("Fallo al obtener el texto:", str(e))
+            self.logger.error( f"[Exception] {str(e)} | field={field} | by={by} | path={path} | product_id={product_id} | retailer={retailer}" )
+            self.load.load_scraping_error_logs(product_id, retailer, "Exception", str(e), by, path, field)
             return None

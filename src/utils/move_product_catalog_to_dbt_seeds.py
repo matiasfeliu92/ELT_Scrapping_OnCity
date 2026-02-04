@@ -20,11 +20,12 @@ class MoveXlsxToSeeds:
         try: 
             creds = Credentials.from_service_account_file( self.google_sheet_credentials, scopes=self.google_scopes ) 
             client = gspread.authorize(creds) 
-            sheet_url = "https://docs.google.com/spreadsheets/d/1HWSNVwLffxLLnYf45-2QqF8br_qzkkzupd56h3RIMnU/edit" 
+            sheet_url = "https://docs.google.com/spreadsheets/d/1HWSNVwLffxLLnYf45-2QqF8br_qzkkzupd56h3RIMnU/edit"
             spreadsheet = client.open_by_url(sheet_url) 
             worksheet = spreadsheet.sheet1 
             data = worksheet.get_all_records() 
-            self.product_catalog_gsheet = pd.DataFrame(data) 
+            self.product_catalog_gsheet = pd.DataFrame(data)
+            self.logger.info("Product Catalog was load succesfully")
             return self.product_catalog_gsheet 
         except FileNotFoundError as e: 
             self.logger.error(f"Credenciales no encontradas: {e}") 
@@ -39,4 +40,4 @@ class MoveXlsxToSeeds:
             file_name = "product_catalog.csv"
             file_name_path = os.path.join(self.product_catalog_csv_output, file_name)
             self.product_catalog_gsheet.to_csv(file_name_path, sep=";", index=False)
-            self.logger.info(f'PRODUCT CATALOG CSV WAS SAVED ----- {file_name_path}')
+            self.logger.info(f'Product Catalog was saved in CSV format ----- {file_name_path}')

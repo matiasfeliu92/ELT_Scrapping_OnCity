@@ -36,6 +36,9 @@ class ProductsPipelineDAG:
         self.move_product_catalog.read_google_sheets()
         self.move_product_catalog.load_csv_in_dbt_seeds()
 
+    def create_scraping_error_logs(self):
+        self.load_data.create_scraping_error_logs_table()
+
     def extract_scraped_data(self):
         scraped_data = self.extract_data.extract()
         return scraped_data
@@ -79,6 +82,11 @@ class ProductsPipelineDAG:
                 bash_command=f"cd {os.path.join(self.base_dir, 'products_scraping')} && dbt seed --profiles-dir /opt/airflow/.dbt && cd {self.base_dir}"
             )
 
+            create_scraping_error_logs_table = PythonOperator(
+                task_id='create_scraping_error_logs_table',
+                python_callable=self.create_scraping_error_logs,
+            )
+
             extract_data = PythonOperator(
                 task_id='extract_scraped_data',
                 python_callable=self.extract_scraped_data,
@@ -97,7 +105,7 @@ class ProductsPipelineDAG:
                 """
             )
 
-            move_product_catalog_to_seeds_ >> update_dbt_profile >> dbt_seed >> extract_data >> load_data >> update_dbt_profile_to_localhost
+            move_product_catalog_to_seeds_ >> update_dbt_profile >> dbt_seed >> create_scraping_error_logs_table >> extract_data >> load_data >> update_dbt_profile_to_localhost
 
         return dag
     

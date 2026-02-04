@@ -44,6 +44,7 @@ class ManageDB:
         try:
             with __conn__.cursor() as cur:             
                 cur.execute(sql.SQL("CREATE SCHEMA IF NOT EXISTS {}").format(sql.Identifier(__schema_name__)))
+                __conn__.commit()
                 cls.logger.info(f"✅ Nuevo schema '{__schema_name__}' creado correctamente.")
         except Exception as e:
             cls.logger.error(f"❌ Error al crear el schema: {e}")
