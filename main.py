@@ -20,4 +20,3 @@ if __name__ == "__main__":
     os.chdir(base_dir)
     load_data.create_scraping_error_logs_table()
     scraped_products = extract_data.extract()
-    load_data.load(scraped_products)

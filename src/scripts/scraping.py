@@ -40,8 +40,8 @@ class Scraping:
             con_stock = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["CON_STOCK"], "con stock", self.product_id, self.retailer)
             description = self.extract_elements.safe_find_elements(By.XPATH, self.scraping_settings.MEGATONE_SELECTORS["DESCRIPTION"], "description", self.product_id, self.retailer, multiple=True)
 
-            category_path_links = category_path_nav.find_elements(By.TAG_NAME, "a")
-            category_path_links_text = [link.text for link in category_path_links]
+            category_path_links = category_path_nav.find_elements(By.TAG_NAME, "a") if category_path_nav else []
+            category_path_links_text = [link.text for link in category_path_links] if category_path_links else []
 
             if price_tachado and price_mostrado and price_1_pago:
                 list_price = price_tachado.text

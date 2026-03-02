@@ -10,7 +10,6 @@ from src.config.db import ManageDB
 from src.config.logger import LoggerConfig
 from src.scripts.load_data import LoadData
 from src.scripts.scraping import Scraping
-from src.config.scraping_settings import ScrapingSettings
 from src.config.settings import Settings
 from src.utils.get_last_timestamp import GetLastTimestamp
 
@@ -49,32 +48,22 @@ class ExtractData:
     def extract(self):
         product_catalog_query = f"""SELECT * FROM catalog.product_catalog"""
         product_catalog_links = pd.read_sql(product_catalog_query, con=self.engine)
-        output_json_path = self.settings.create_dir("data/json")
-        file_name = "all_products.json"
-        json_complete_dir = os.path.join(output_json_path, file_name)
-        json_complete_dir = os.path.normpath(json_complete_dir)
-        metadata = MetaData() 
-        scraping_data_table = Table("scraping_data", metadata, schema="raw", autoload_with=self.engine)
-        last_timestamp = self.get_last_timestamp.execute(self.engine, scraping_data_table)
-        if last_timestamp.date() == datetime.now().date():
-            self.logger.info(f"The scraping has already been run and the last timestamp in scraping-data table is: {last_timestamp.date()}")
-        else:
-            self.logger.info("scraping_data table wasn't updated")
-            self.logger.info("Scraping process will start now")
-            for _, row in product_catalog_links.iterrows():
-                scraped_at = datetime.now().strftime('%Y-%m-%d')
-                product_id = row["product_id"]
-                retailer = row["retailer"]
-                link = row["link"]
-                scraper = Scraping(link, product_id, retailer)
-                product_data = scraper.run()
-                print(product_data)
-                product_data_formatted = {
-                    "scraped_at": scraped_at,
-                    "product_id": product_id,
-                    "retailer": retailer,
-                    "data": product_data
-                }
-                self.all_products_data.append(product_data_formatted)
+        self.logger.info("scraping_data table wasn't updated")
+        self.logger.info("Scraping process will start now")
+        for _, row in product_catalog_links.sample(5).iterrows():
+            scraped_at = datetime.now().strftime('%Y-%m-%d')
+            product_id = row["product_id"]
+            retailer = row["retailer"]
+            link = row["link"]
+            scraper = Scraping(link, product_id, retailer)
+            product_data = scraper.run()
+            print(product_data)
+            product_data_formatted = {
+                "scraped_at": scraped_at,
+                "product_id": product_id,
+                "retailer": retailer,
+                "data": product_data
+            }
             self.logger.info("Scraping process run successfuly")
-            return self.all_products_data
+            self.load_data = LoadData()
+            self.load_data.load(product_data_formatted)
