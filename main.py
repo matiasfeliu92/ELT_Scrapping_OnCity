@@ -1,6 +1,7 @@
 import subprocess
 import os
 
+from src.scripts.normalize_and_load_products import NormalizeAndLoadScrapedProducts
 from src.config.settings import Settings
 from src.scripts.load_data import LoadData
 from src.scripts.extract_data import ExtractData
@@ -16,7 +17,10 @@ if __name__ == "__main__":
     base_dir = settings.BASE_DIR
     os.chdir(os.path.join(base_dir, "products_scraping"))
     result = subprocess.run(["dbt", "seed"], capture_output=True, text=True)
+    print("result.stdout")
     print(result.stdout)
     os.chdir(base_dir)
     load_data.create_scraping_error_logs_table()
     scraped_products = extract_data.extract()
+    normalize_and_load = NormalizeAndLoadScrapedProducts()
+    normalize_and_load.read_data()

@@ -71,6 +71,25 @@ class Settings:
         host=POSTGRES_DB_HOST_DOCKER,
         port=5432,
     )
+    STOCK_CONFIG = {
+        "Electrodomesticos": {
+            "Lavarropas": (1, 8),   # Alta rotación, stock limitado
+            "Heladeras": (1, 6),    # Stock crítico frecuente
+            "Cocinas": (2, 10),
+            "Microondas": (5, 15),
+            "Aires Acondicionados": (2, 12)
+        },
+        "Tecnologia": {
+            "Celulares": (10, 30),  # Mucho movimiento, stock más alto
+            "Tv": (5, 20)           # Stock intermedio
+        },
+        "Audio": {
+            "Parlantes": (8, 25)
+        },
+        "Cuidado Personal": {
+            "Depiladoras": (15, 40) # Generalmente hay mucho stock
+        }
+    }
 
     @classmethod 
     def get_dir(cls, *args) -> str: 

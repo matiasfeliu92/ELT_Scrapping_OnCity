@@ -11,3 +11,5 @@ dbt-postgres
 openpyxl
 gspread
 google-auth
+fastapi
+uvicorn
