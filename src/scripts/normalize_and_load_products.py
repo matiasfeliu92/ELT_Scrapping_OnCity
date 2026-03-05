@@ -1,8 +1,10 @@
 import json
+from logging import debug
+import random
 
 import pandas as pd
 from sqlalchemy.sql import over
-from sqlalchemy import Column, Float, Integer, String, select, func, desc, Table, MetaData
+from sqlalchemy import Column, Float, Integer, String, select, func, desc, Table, MetaData, text
 
 from src.config.db import ManageDB
 from src.config.logger import LoggerConfig
@@ -23,18 +25,32 @@ class NormalizeAndLoadScrapedProducts:
         self.scraped_products_df = pd.DataFrame()  # Inicializa el DataFrame para almacenar los productos
         self.products_table = "products"
 
+    def calculate_stock(self, row):
+        # Si el scraping dice que no hay stock, devolvemos 0
+        if not row['stock'] or str(row['stock']).lower() == 'false' or str(row['is_active']).lower() == 'false':
+            return 0
+        
+        # Buscamos en el diccionario usando main_category y sub_category
+        main = row['main_category']
+        sub = row['sub_category']
+        
+        # Obtenemos el rango: primero por subcategoría, si no existe por defecto (5, 15)
+        limit_range = self.settings.STOCK_CONFIG.get(main, {}).get(sub, (5, 15))
+        
+        return random.randint(*limit_range)
+
     def normalize_data(self, df: pd.DataFrame) -> pd.DataFrame:
         self.logger.info("Transforming data...")
         self.logger.info(f"COLUMNS IN DATA TO NORMALIZE: {df.columns}")
         df["scraped_list_price"] = df["scraped_list_price"].apply(self.normalize_price.execute)
         df["scraped_cash_price"] = df["scraped_cash_price"].apply(self.normalize_price.execute)
-
+        self.logger.info("PRECIOS NORMALIZADOS")
         df["is_active"] = (
             (df["scraped_cash_price"].notna() |
             df["scraped_list_price"].notna()) &
             (df["scraped_name"].notnull() | df["scraped_sku"].notnull())
         )
-
+        self.logger.info("NUEVA COLUMNA IS ACTIVE")
         df.rename(columns={
             "scraped_sku": "sku",
             "scraped_name": "name",
@@ -43,7 +59,7 @@ class NormalizeAndLoadScrapedProducts:
             "scraped_stock": "stock",
             "scraped_store": "store"
         }, inplace=True)
-
+        self.logger.info("COLUMNAS RENOMBRADAS")
         return df
 
     def read_data(self):
@@ -122,7 +138,13 @@ class NormalizeAndLoadScrapedProducts:
                 f"Data read successfully. Number of records: {len(self.scraped_products_df)}"
             )
             scraped_products_df_V2  = self.normalize_data(self.scraped_products_df)
-            scraped_products_df_V2.to_sql(product_table.name, con=self.engine, schema=product_table.schema, if_exists="replace", index=False)
+            scraped_products_df_V2['stock_level'] = scraped_products_df_V2.apply(self.calculate_stock, axis=1)
+            # with self.engine.connect() as conn:
+            #     conn.execute(text("TRUNCATE TABLE raw.products RESTART IDENTITY CASCADE"))
+            #     conn.commit()
+            scraped_products_df_V2.index = pd.RangeIndex(start=1, stop=len(scraped_products_df_V2) + 1, step=1)
+            scraped_products_df_V2.index.name = "id"
+            scraped_products_df_V2.to_sql(product_table.name, con=self.engine, schema=product_table.schema, if_exists="replace", index=True)
         except Exception as e:
             self.logger.error(f"Error reading data: {e}")
 
