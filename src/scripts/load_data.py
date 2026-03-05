@@ -185,17 +185,26 @@ class LoadData:
                 conn.execute(schema.CreateSchema("raw"))
             metadata.create_all(conn)
 
-        # Insertar en raw.scraping_data
-        with self.engine.begin() as conn:
-            stmt = insert(raw_products_scraping).values(__data__)
-            stmt = stmt.on_conflict_do_nothing(
-                index_elements=["scraped_at", "product_id", "retailer"]
-            )
-            conn.execute(stmt)
-        self.logger.info(f"Data successfully loaded into table: raw.{table_name} (duplicates ignored)")
+        # # Insertar en raw.scraping_data
+        # with self.engine.begin() as conn:
+        #     stmt = insert(raw_products_scraping).values(__data__)
+        #     stmt = stmt.on_conflict_do_nothing(
+        #         index_elements=["scraped_at", "product_id", "retailer"]
+        #     )
+        #     conn.execute(stmt)
+        # self.logger.info(f"Data successfully loaded into table: raw.{table_name} (duplicates ignored)")
 
         if insert_in_products:
             products_table = Table("products", metadata, autoload_with=self.engine)
+
+            # Insertar en raw.scraping_data
+            with self.engine.begin() as conn:
+                stmt = insert(raw_products_scraping).values(__data__)
+                stmt = stmt.on_conflict_do_nothing(
+                    index_elements=["scraped_at", "product_id", "retailer"]
+                )
+                conn.execute(stmt)
+            self.logger.info(f"Data successfully loaded into table: raw.{table_name} (duplicates ignored)")
 
             with self.engine.begin() as conn:
                 stmt = (
@@ -219,6 +228,7 @@ class LoadData:
                     }
                     conn.execute(insert(products_table).values(new_product_entry))
 
+            self.logger.info(f"Registro scrapeado de Producto {product_id} actualizado/insertado en raw_products_scraping")
             self.logger.info(f"Producto {product_id} actualizado/insertado en raw.products.")
 
         self.logger.info("Data load process completed.")
