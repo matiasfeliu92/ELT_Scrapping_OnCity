@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import json
 import platform
+import sys
 import pandas as pd
 import os
 
@@ -16,6 +17,7 @@ from src.utils.get_last_timestamp import GetLastTimestamp
 class ExtractData:
     engine = None
     def __init__(self):
+        self.args = sys.argv
         self.db_config = ManageDB()
         self.settings = Settings()
         self.load_data = LoadData()
@@ -48,22 +50,26 @@ class ExtractData:
     def extract(self):
         product_catalog_query = f"""SELECT * FROM catalog.product_catalog"""
         product_catalog_links = pd.read_sql(product_catalog_query, con=self.engine)
-        self.logger.info("scraping_data table wasn't updated")
-        self.logger.info("Scraping process will start now")
-        for _, row in product_catalog_links.sample(5).iterrows():
-            scraped_at = datetime.now().strftime('%Y-%m-%d')
-            product_id = row["product_id"]
-            retailer = row["retailer"]
-            link = row["link"]
-            scraper = Scraping(link, product_id, retailer)
-            product_data = scraper.run()
-            print(product_data)
-            product_data_formatted = {
-                "scraped_at": scraped_at,
-                "product_id": product_id,
-                "retailer": retailer,
-                "data": product_data
-            }
-            self.logger.info("Scraping process run successfuly")
-            self.load_data = LoadData()
-            self.load_data.load(product_data_formatted)
+        self.logger.info(self.args[1])
+        n_random_products = int(self.args[1])
+        if n_random_products <= product_catalog_links.shape[0]:
+            self.logger.info("Scraping process will start now")
+            for _, row in product_catalog_links.sample(n_random_products).iterrows():
+                scraped_at = datetime.now().strftime('%Y-%m-%d')
+                product_id = row["product_id"]
+                retailer = row["retailer"]
+                link = row["link"]
+                scraper = Scraping(link, product_id, retailer)
+                product_data = scraper.run()
+                print(product_data)
+                product_data_formatted = {
+                    "scraped_at": scraped_at,
+                    "product_id": product_id,
+                    "retailer": retailer,
+                    "data": product_data
+                }
+                self.logger.info("Scraping process run successfuly")
+                self.load_data = LoadData()
+                self.load_data.load(product_data_formatted)
+        else:
+            self.logger.warning(f"Product catalog table has {product_catalog_links.shape[0]}")
