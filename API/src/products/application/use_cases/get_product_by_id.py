@@ -1,7 +1,7 @@
 from typing import List
 
 from API.src.products.domain.entities.product import Product
-from API.src.products.domain.exceptions import ProductNotFoundError
+from API.src.products.exceptions.product_not_found_error import ProductNotFoundError
 from API.src.products.domain.repositories.product_repository import ProductRepository
 
 
