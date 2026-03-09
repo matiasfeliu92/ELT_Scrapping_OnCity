@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from API.src.auth.application.services.auth_service import AuthService
@@ -30,11 +30,8 @@ def register_user(payload: RegisterUserRequest, db: Session = Depends(get_db)):
         phone=payload.phone,
     )
 
-    try:
-        token = service.register(credentials)
-        return AuthTokenResponse(access_token=token)
-    except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
+    token = service.register(credentials)
+    return AuthTokenResponse(access_token=token)
 
 
 @auth_router.post("/login", response_model=AuthTokenResponse)
@@ -44,8 +41,5 @@ def login_user(payload: LoginUserRequest, db: Session = Depends(get_db)):
 
     credentials = AuthCredentials(email=payload.email, password=payload.password)
 
-    try:
-        token = service.login(credentials)
-        return AuthTokenResponse(access_token=token)
-    except ValueError as exc:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(exc))
+    token = service.login(credentials)
+    return AuthTokenResponse(access_token=token)

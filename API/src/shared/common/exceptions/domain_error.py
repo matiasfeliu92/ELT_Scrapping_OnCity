@@ -1,3 +1,3 @@
-class DomainError(Exception):
-    """Base class for domain-level exceptions."""
-    pass
+from API.src.shared.exceptions import DomainError
+
+__all__ = ["DomainError"]

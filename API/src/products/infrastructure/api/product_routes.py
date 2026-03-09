@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
 
 from API.src.products.application.services.product_service import ProductService
-from API.src.products.exceptions.product_not_found_error import ProductNotFoundError
 from API.src.shared.infrastructure.db.config import Config
 from API.src.products.infrastructure.repositories.sqlalchemy_product_repository import SQLAlchemyProductRepository
 from API.src.products.infrastructure.schemas.product import Product as ProductResponse
@@ -24,10 +22,5 @@ def list_products(db: Session = Depends(get_db)):
 def get_product(product_id: int, db: Session = Depends(get_db)):
     repo = SQLAlchemyProductRepository(db)
     service = ProductService(repo)
-    try:
-        product = service.get_one_by_id(product_id)
-        return ProductResponse.model_validate(product)
-    except ProductNotFoundError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Product not found")
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid id")
+    product = service.get_one_by_id(product_id)
+    return ProductResponse.model_validate(product)

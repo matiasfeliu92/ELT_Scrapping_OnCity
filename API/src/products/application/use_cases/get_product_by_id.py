@@ -1,8 +1,8 @@
 from typing import List
 
 from API.src.products.domain.entities.product import Product
-from API.src.products.exceptions.product_not_found_error import ProductNotFoundError
 from API.src.products.domain.repositories.product_repository import ProductRepository
+from API.src.shared.exceptions import NotFoundError
 
 
 class GetProductById:
@@ -13,5 +13,5 @@ class GetProductById:
         id_vo = id
         product = self.repo.get_by_id(id_vo)
         if product is None:
-            raise ProductNotFoundError(f"Product with id={id} not found")
+            raise NotFoundError(f"Product with id={id} not found")
         return product
