@@ -15,9 +15,11 @@ class SQLAlchemyUserRepository(UserRepository):
             id=model.id,
             email=model.email,
             name=model.name,
+            location=model.location,
+            phone=model.phone,
             is_active=model.is_active,
-            created_at=model.created_at,
-            updated_at=model.updated_at
+            is_admin=model.is_admin,
+            password=model.password
         )
 
     def find_all(self) -> List[User]:
