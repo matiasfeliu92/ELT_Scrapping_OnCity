@@ -1,7 +1,8 @@
 from sqlalchemy import Column, String, Float, Integer, Boolean, DateTime, BigInteger
-from API.src.db.config import Config
 
-class Product(Config().Base):
+from API.src.shared.infrastructure.db.base import Base
+
+class Product(Base):
     __tablename__ = 'products'
     __table_args__ = {"schema": "raw","extend_existing": True} # Importante: tu tabla está en el schema 'raw'
 
