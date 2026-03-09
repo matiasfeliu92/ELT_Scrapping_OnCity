@@ -13,3 +13,7 @@ gspread
 google-auth
 fastapi
 uvicorn
+passlib[bcrypt]
+python-jose[pycryptodome]
+PyJWT
+bcrypt
