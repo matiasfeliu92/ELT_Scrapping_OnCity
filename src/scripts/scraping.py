@@ -177,7 +177,7 @@ class Scraping:
             installments = self.extract_elements.safe_find_elements(By.CSS_SELECTOR, self.scraping_settings.MUSIMUNDO_SELECTORS["INSTALLMENTS"], "installments", self.product_id, self.retailer, multiple=True)
             button_ad_to_cart = self.extract_elements.safe_find_elements(By.ID, self.scraping_settings.MUSIMUNDO_SELECTORS["BUTTON_ADD_TO_CART"], self.product_id, self.retailer)
             
-            category_path_links_text = [link.find_element(By.TAG_NAME, "a").text for link in category_path_nav if link.get_attribute("data-test-breadcrumbs") == "breadcrumb"]
+            category_path_links_text = [link.find_element(By.TAG_NAME, "a").text for link in category_path_nav if link.get_attribute("data-test-breadcrumbs") == "breadcrumb"] if category_path_nav else []
 
             if price_tachado and price_mostrado:
                 list_price = price_tachado
@@ -198,8 +198,8 @@ class Scraping:
             self.product_data["name"] = product_title.text if product_title else ""
             self.product_data["sku"] = product_sku.text if product_sku else ""
             self.product_data["brand"] = brand.text if brand else ""
-            self.product_data["main_category"] = category_path_links_text[0] if len(category_path_links_text)>1 else ""
-            self.product_data["sub_category"] = category_path_links_text[1] if len(category_path_links_text)>2 else ""
+            self.product_data["main_category"] = category_path_links_text[0] if len(category_path_links_text)>0 else ""
+            self.product_data["sub_category"] = category_path_links_text[1] if len(category_path_links_text)>1 else ""
             self.product_data["list_price"] = list_price.text if list_price else ""
             self.product_data["cash_price"] = cash_price.text if cash_price else ""
             self.product_data["installments"] = installments_dict
