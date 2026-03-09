@@ -1,5 +1,7 @@
 from API.src.auth.domain.entities.auth_credentials import AuthCredentials
 from API.src.auth.domain.repositories.auth_repository import AuthRepository
+from API.src.shared.exceptions import AuthenticationError
+from API.src.shared.exceptions.base import NotFoundError
 
 
 class LoginUser:
@@ -10,13 +12,13 @@ class LoginUser:
         user = self.repo.find_by_email(credentials.email)
 
         if not user:
-            raise ValueError("Credenciales invalidas")
+            raise NotFoundError("El usuario no existe")
 
         if not user.can_authenticate():
-            raise ValueError("Usuario inactivo")
+            raise AuthenticationError("Usuario inactivo")
 
         if not self.repo.verify_password(credentials.password, user.password_hash):
-            raise ValueError("Credenciales invalidas")
+            raise AuthenticationError("Credenciales invalidas")
 
         token = self.repo.generate_access_token(user)
         self.repo.persist_token(user.id, token)

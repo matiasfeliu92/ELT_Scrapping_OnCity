@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import re
 
+from API.src.shared.exceptions import ValidationError
+
 
 _PASSWORD_POLICY_REGEX = re.compile(
     r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$"
@@ -18,11 +20,11 @@ class AuthCredentials:
     def __post_init__(self) -> None:
         self.email = self.email.strip().lower()
         if "@" not in self.email:
-            raise ValueError("Email invalido")
+            raise ValidationError("Email invalido")
 
     def validate_password_strength(self) -> None:
         if not _PASSWORD_POLICY_REGEX.match(self.password):
-            raise ValueError(
+            raise ValidationError(
                 "La contrasena debe tener al menos 8 caracteres, una mayuscula, "
                 "una minuscula, un numero y un simbolo"
             )

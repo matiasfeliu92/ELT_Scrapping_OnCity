@@ -11,6 +11,7 @@ from API.src.auth.domain.entities.auth_credentials import AuthCredentials
 from API.src.auth.domain.entities.auth_user import AuthUser
 from API.src.auth.domain.repositories.auth_repository import AuthRepository
 from API.src.auth.infrastructure.models.auth_token import AuthToken as AuthTokenModel
+from API.src.shared.exceptions import AuthenticationError, ValidationError
 from API.src.users.infrastructure.models.user import User as UserModel
 
 
@@ -88,7 +89,7 @@ class SQLAlchemyAuthRepository(AuthRepository):
         ).first()
 
         if not db_token:
-            raise ValueError("Token invalido o revocado")
+            raise AuthenticationError("Token invalido o revocado")
 
         return payload
 
@@ -96,7 +97,7 @@ class SQLAlchemyAuthRepository(AuthRepository):
         unverified_payload = jwt.decode(token, options={"verify_signature": False})
         exp = unverified_payload.get("exp")
         if not exp:
-            raise ValueError("Token sin expiracion")
+            raise ValidationError("Token sin expiracion")
 
         token_row = AuthTokenModel(
             user_id=user_id,

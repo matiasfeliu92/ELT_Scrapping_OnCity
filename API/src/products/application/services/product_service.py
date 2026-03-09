@@ -4,6 +4,7 @@ from API.src.products.application.use_cases.get_all_products import GetAllProduc
 from API.src.products.application.use_cases.get_product_by_id import GetProductById
 from API.src.products.domain.entities.product import Product as ProductDomain
 from API.src.products.domain.repositories.product_repository import ProductRepository
+from API.src.shared.exceptions import AppException, InternalServerError
 
 class ProductService:
     def __init__(self, repo: ProductRepository):
@@ -12,7 +13,17 @@ class ProductService:
         self.get_product_by_id = GetProductById(self.repo)
 
     def get_all(self) -> List[ProductDomain]:
-        return self.get_all_products.__call__()
+        try:
+            return self.get_all_products.__call__()
+        except AppException:
+            raise
+        except Exception as exc:
+            raise InternalServerError("Error obteniendo productos") from exc
     
     def get_one_by_id(self, id:int) -> ProductDomain:
-        return self.get_product_by_id.__call__(id)
+        try:
+            return self.get_product_by_id.__call__(id)
+        except AppException:
+            raise
+        except Exception as exc:
+            raise InternalServerError("Error obteniendo producto") from exc
